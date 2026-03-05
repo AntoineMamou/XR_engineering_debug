@@ -1,0 +1,63 @@
+classDiagram
+    %% Définition des groupes (Namespaces)
+    namespace Bootstrap {
+        class AppBootstrapper
+    }
+
+    namespace Models_and_Config {
+        class TimeModel {
+            +DateTime CurrentTime
+            +Action~DateTime~ OnTimeChanged
+        }
+        class SolarSystemConfig
+        class PlanetData {
+            <<static>>
+        }
+    }
+
+    namespace Services {
+        class IPlanetEphemerisService {
+            <<interface>>
+        }
+        class PlanetEphemerisService
+    }
+
+    namespace Controllers {
+        class PlanetSystemController
+        class TimeController
+        class FocusController
+        class ScaleController
+        class TableGrabController
+    }
+
+    namespace Views {
+        class PlanetView
+        class PlanetInfoView
+        class SolarSystemRoot {
+            <<GameObject>>
+        }
+    }
+
+    %% Initialisation
+    AppBootstrapper ..> TimeModel : instancie
+    AppBootstrapper ..> PlanetEphemerisService : instancie et injecte des dépendances
+    AppBootstrapper ..> PlanetSystemController : instancie et injecte des dépendances
+    AppBootstrapper ..> FocusController : instancie et injecte des dépendances
+    AppBootstrapper ..> TimeController : instancie et injecte des dépendances
+
+    %% Flux du temps
+    TimeController --> TimeModel : met à jour via Update()
+    TimeModel --> PlanetSystemController : déclenche OnTimeChanged
+    TimeModel --> FocusController : donne la date simulée
+
+    %% Flux de positionnement
+    PlanetSystemController --> IPlanetEphemerisService : demande positions
+    PlanetEphemerisService ..> PlanetData : lit les constantes de Kepler
+    PlanetSystemController --> PlanetView : applique les transformations
+
+    %% Flux VR
+    FocusController --> PlanetInfoView : affiche les données orbitales
+    ScaleController --> SolarSystemRoot : applique l'échelle validée
+
+    %% Implémentation de l'interface
+    IPlanetEphemerisService <|.. PlanetEphemerisService
