@@ -11,7 +11,9 @@ public class AppBootstrapper : MonoBehaviour
 
     TimeModel timeModel;
     PlanetSystemController controller;
-    
+
+    public FocusController focusController;
+
 
     void Start()
     {
@@ -31,5 +33,7 @@ public class AppBootstrapper : MonoBehaviour
         timeModel.SetTime(DateTime.Now);
 
         timeController.Init(timeModel);
+
+        focusController.Init(timeModel);
     }
 }
